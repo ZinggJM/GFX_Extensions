@@ -1,35 +1,35 @@
 /*!
- * @file Adafruit_SPITFT.cpp
- *
- * @mainpage Adafruit SPI TFT Displays (and some others)
- *
- * @section intro_sec Introduction
- *
- * Part of Adafruit's GFX graphics library. Originally this class was
- * written to handle a range of color TFT displays connected via SPI,
- * but over time this library and some display-specific subclasses have
- * mutated to include some color OLEDs as well as parallel-interfaced
- * displays. The name's been kept for the sake of older code.
- *
- * Adafruit invests time and resources providing this open source code,
- * please support Adafruit and open-source hardware by purchasing
- * products from Adafruit!
+   @file Adafruit_SPITFT.cpp
 
- * @section dependencies Dependencies
- *
- * This library depends on <a href="https://github.com/adafruit/Adafruit_GFX">
- * Adafruit_GFX</a> being present on your system. Please make sure you have
- * installed the latest version before using this library.
- *
- * @section author Author
- *
- * Written by Limor "ladyada" Fried for Adafruit Industries,
- * with contributions from the open source community.
- *
- * @section license License
- *
- * BSD license, all text here must be included in any redistribution.
- */
+   @mainpage Adafruit SPI TFT Displays (and some others)
+
+   @section intro_sec Introduction
+
+   Part of Adafruit's GFX graphics library. Originally this class was
+   written to handle a range of color TFT displays connected via SPI,
+   but over time this library and some display-specific subclasses have
+   mutated to include some color OLEDs as well as parallel-interfaced
+   displays. The name's been kept for the sake of older code.
+
+   Adafruit invests time and resources providing this open source code,
+   please support Adafruit and open-source hardware by purchasing
+   products from Adafruit!
+
+   @section dependencies Dependencies
+
+   This library depends on <a href="https://github.com/adafruit/Adafruit_GFX">
+   Adafruit_GFX</a> being present on your system. Please make sure you have
+   installed the latest version before using this library.
+
+   @section author Author
+
+   Written by Limor "ladyada" Fried for Adafruit Industries,
+   with contributions from the open source community.
+
+   @section license License
+
+   BSD license, all text here must be included in any redistribution.
+*/
 
 #if !defined(__AVR_ATtiny85__) // Not for ATtiny, at all
 
@@ -61,7 +61,9 @@
 
 // DMA transfer-in-progress indicator and callback
 static volatile bool dma_busy = false;
-static void dma_callback(Adafruit_ZeroDMA *dma) { dma_busy = false; }
+static void dma_callback(Adafruit_ZeroDMA *dma) {
+  dma_busy = false;
+}
 
 #if defined(__SAMD51__)
 // Timer/counter info by index #
@@ -70,20 +72,20 @@ static const struct {
   int gclk; // GCLK ID
   int evu;  // EVSYS user ID
 } tcList[] = {{TC0, TC0_GCLK_ID, EVSYS_ID_USER_TC0_EVU},
-              {TC1, TC1_GCLK_ID, EVSYS_ID_USER_TC1_EVU},
-              {TC2, TC2_GCLK_ID, EVSYS_ID_USER_TC2_EVU},
-              {TC3, TC3_GCLK_ID, EVSYS_ID_USER_TC3_EVU},
+  {TC1, TC1_GCLK_ID, EVSYS_ID_USER_TC1_EVU},
+  {TC2, TC2_GCLK_ID, EVSYS_ID_USER_TC2_EVU},
+  {TC3, TC3_GCLK_ID, EVSYS_ID_USER_TC3_EVU},
 #if defined(TC4)
-              {TC4, TC4_GCLK_ID, EVSYS_ID_USER_TC4_EVU},
+  {TC4, TC4_GCLK_ID, EVSYS_ID_USER_TC4_EVU},
 #endif
 #if defined(TC5)
-              {TC5, TC5_GCLK_ID, EVSYS_ID_USER_TC5_EVU},
+  {TC5, TC5_GCLK_ID, EVSYS_ID_USER_TC5_EVU},
 #endif
 #if defined(TC6)
-              {TC6, TC6_GCLK_ID, EVSYS_ID_USER_TC6_EVU},
+  {TC6, TC6_GCLK_ID, EVSYS_ID_USER_TC6_EVU},
 #endif
 #if defined(TC7)
-              {TC7, TC7_GCLK_ID, EVSYS_ID_USER_TC7_EVU}
+  {TC7, TC7_GCLK_ID, EVSYS_ID_USER_TC7_EVU}
 #endif
 };
 #define NUM_TIMERS (sizeof tcList / sizeof tcList[0]) ///< # timer/counters
@@ -114,11 +116,11 @@ static const struct {
              need to call subclass' begin() function, which in turn calls
              this library's initSPI() function to initialize pins.
 */
-GFX_IO::GFX_IO(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
-                                 int8_t mosi, int8_t sck, int8_t rst,
-                                 int8_t miso)
-    : GFX_Root(w, h), connection(TFT_SOFT_SPI), _rst(rst), _cs(cs),
-      _dc(dc) {
+GFX_IO::GFX_IO(uint16_t w, uint16_t h, int16_t cs, int16_t dc,
+               int16_t mosi, int16_t sck, int16_t rst,
+               int16_t miso)
+  : GFX_Root(w, h), connection(TFT_SOFT_SPI), _rst(rst), _cs(cs),
+    _dc(dc) {
   swspi._sck = sck;
   swspi._mosi = mosi;
   swspi._miso = miso;
@@ -235,16 +237,16 @@ GFX_IO::GFX_IO(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
              this library's initSPI() function to initialize pins.
 */
 #if defined(ESP8266) // See notes below
-GFX_IO::GFX_IO(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
-                                 int8_t rst)
-    : GFX_Root(w, h), connection(TFT_HARD_SPI), _rst(rst), _cs(cs),
-      _dc(dc) {
+GFX_IO::GFX_IO(uint16_t w, uint16_t h, int16_t cs, int16_t dc,
+               int16_t rst)
+  : GFX_Root(w, h), connection(TFT_HARD_SPI), _rst(rst), _cs(cs),
+    _dc(dc) {
   hwspi._spi = &SPI;
 }
 #else  // !ESP8266
-GFX_IO::GFX_IO(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
-                                 int8_t rst)
-    : GFX_IO(w, h, &SPI, cs, dc, rst) {
+GFX_IO::GFX_IO(uint16_t w, uint16_t h, int16_t cs, int16_t dc,
+               int16_t rst)
+  : GFX_IO(w, h, &SPI, cs, dc, rst) {
   // This just invokes the hardware SPI constructor below,
   // passing the default SPI device (&SPI).
 }
@@ -279,9 +281,9 @@ GFX_IO::GFX_IO(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
              begin or init function. Unfortunate but unavoidable.
 */
 GFX_IO::GFX_IO(uint16_t w, uint16_t h, SPIClass *spiClass,
-                                 int8_t cs, int8_t dc, int8_t rst)
-    : GFX_Root(w, h), connection(TFT_HARD_SPI), _rst(rst), _cs(cs),
-      _dc(dc) {
+               int16_t cs, int16_t dc, int16_t rst)
+  : GFX_Root(w, h), connection(TFT_HARD_SPI), _rst(rst), _cs(cs),
+    _dc(dc) {
   hwspi._spi = spiClass;
 #if defined(USE_FAST_PINIO)
 #if defined(HAS_PORT_SET_CLR)
@@ -375,10 +377,10 @@ GFX_IO::GFX_IO(uint16_t w, uint16_t h, SPIClass *spiClass,
              wanting to break existing code).
 */
 GFX_IO::GFX_IO(uint16_t w, uint16_t h, tftBusWidth busWidth,
-                                 int8_t d0, int8_t wr, int8_t dc, int8_t cs,
-                                 int8_t rst, int8_t rd)
-    : GFX_Root(w, h), connection(TFT_PARALLEL), _rst(rst), _cs(cs),
-      _dc(dc) {
+               int16_t d0, int16_t wr, int16_t dc, int16_t cs,
+               int16_t rst, int16_t rd)
+  : GFX_Root(w, h), connection(TFT_PARALLEL), _rst(rst), _cs(cs),
+    _dc(dc) {
   tft8._d0 = d0;
   tft8._wr = wr;
   tft8._rd = rd;
@@ -462,10 +464,10 @@ GFX_IO::GFX_IO(uint16_t w, uint16_t h, tftBusWidth busWidth,
     offset &= ~1; // d[15:8] byte # within PORT
   // These are all uint8_t* pointers -- elsewhere they're recast
   // as necessary if a 'wide' 16-bit interface is in use.
-  tft8.writePort = (volatile uint8_t *)&(p->OUT.reg) + offset;
-  tft8.readPort = (volatile uint8_t *)&(p->IN.reg) + offset;
-  tft8.dirSet = (volatile uint8_t *)&(p->DIRSET.reg) + offset;
-  tft8.dirClr = (volatile uint8_t *)&(p->DIRCLR.reg) + offset;
+  tft8.writePort = (volatile uint8_t *) & (p->OUT.reg) + offset;
+  tft8.readPort = (volatile uint8_t *) & (p->IN.reg) + offset;
+  tft8.dirSet = (volatile uint8_t *) & (p->DIRSET.reg) + offset;
+  tft8.dirClr = (volatile uint8_t *) & (p->DIRCLR.reg) + offset;
 #endif // end !CORE_TEENSY
 #else  // !HAS_PORT_SET_CLR
   tft8.wrPort = (PORTreg_t)portOutputRegister(digitalPinToPort(wr));
@@ -540,7 +542,12 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
   if (connection == TFT_HARD_SPI) {
 
 #if defined(SPI_HAS_TRANSACTION)
+#if defined(ARDUINO_ARCH_STM32)
+    //hwspi.settings = SPISettings(freq, MSBFIRST, spiMode, SPI_TRANSMITONLY);
     hwspi.settings = SPISettings(freq, MSBFIRST, spiMode);
+#else
+    hwspi.settings = SPISettings(freq, MSBFIRST, spiMode);
+#endif
 #else
     hwspi._freq = freq; // Save freq value for later
 #endif
@@ -559,25 +566,25 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
     // immediately followed with initialization commands. Blargh.
     if (
 #if !defined(SPI_INTERFACES_COUNT)
-        1
+      1
 #endif
 #if SPI_INTERFACES_COUNT > 0
-        (hwspi._spi == &SPI)
+      (hwspi._spi == &SPI)
 #endif
 #if SPI_INTERFACES_COUNT > 1
-        || (hwspi._spi == &SPI1)
+      || (hwspi._spi == &SPI1)
 #endif
 #if SPI_INTERFACES_COUNT > 2
-        || (hwspi._spi == &SPI2)
+      || (hwspi._spi == &SPI2)
 #endif
 #if SPI_INTERFACES_COUNT > 3
-        || (hwspi._spi == &SPI3)
+      || (hwspi._spi == &SPI3)
 #endif
 #if SPI_INTERFACES_COUNT > 4
-        || (hwspi._spi == &SPI4)
+      || (hwspi._spi == &SPI4)
 #endif
 #if SPI_INTERFACES_COUNT > 5
-        || (hwspi._spi == &SPI5)
+      || (hwspi._spi == &SPI5)
 #endif
     ) {
       hwspi._spi->begin();
@@ -593,10 +600,10 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
     }
 
   } else { // TFT_PARALLEL
-           // Initialize data pins.  We were only passed d0, so scan
-           // the pin description list looking for the other pins.
-           // They'll be on the same PORT, and within the next 7 (or 15) bits
-           // (because we need to write to a contiguous PORT byte or word).
+    // Initialize data pins.  We were only passed d0, so scan
+    // the pin description list looking for the other pins.
+    // They'll be on the same PORT, and within the next 7 (or 15) bits
+    // (because we need to write to a contiguous PORT byte or word).
 #if defined(__AVR__)
     // PORT registers are 8 bits wide, so just need a register match...
     for (uint8_t i = 0; i < NUM_DIGITAL_PINS; i++) {
@@ -617,8 +624,8 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
     }
 #else  // !CORE_TEENSY
     uint8_t portNum = g_APinDescription[tft8._d0].ulPort, // d0 PORT #
-        dBit = g_APinDescription[tft8._d0].ulPin,         // d0 bit in PORT
-        lastBit = dBit + (tft8.wide ? 15 : 7);
+            dBit = g_APinDescription[tft8._d0].ulPin,         // d0 bit in PORT
+            lastBit = dBit + (tft8.wide ? 15 : 7);
     for (uint8_t i = 0; i < PINS_COUNT; i++) {
       if ((g_APinDescription[i].ulPort == portNum) &&
           (g_APinDescription[i].ulPin >= dBit) &&
@@ -678,7 +685,7 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
         // available in the version of ARM GCC in use, but this
         // is, so here we are.
         if ((descriptor = (DmacDescriptor *)memalign(
-                 16, numDescriptors * sizeof(DmacDescriptor)))) {
+                            16, numDescriptors * sizeof(DmacDescriptor)))) {
           int dmac_id;
           volatile uint32_t *data_reg;
 
@@ -749,7 +756,7 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
               descriptor[d].BTCTRL.bit.DSTINC = 0;
               descriptor[d].BTCTRL.bit.STEPSEL = DMA_STEPSEL_SRC;
               descriptor[d].BTCTRL.bit.STEPSIZE =
-                  DMA_ADDRESS_INCREMENT_STEP_SIZE_1;
+                DMA_ADDRESS_INCREMENT_STEP_SIZE_1;
               descriptor[d].DSTADDR.reg = (uint32_t)data_reg;
             }
 
@@ -861,12 +868,12 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
               descriptor[d].BTCTRL.bit.EVOSEL = 0x3;
               descriptor[d].BTCTRL.bit.BLOCKACT = DMA_BLOCK_ACTION_NOACT;
               descriptor[d].BTCTRL.bit.BEATSIZE =
-                  tft8.wide ? DMA_BEAT_SIZE_HWORD : DMA_BEAT_SIZE_BYTE;
+                tft8.wide ? DMA_BEAT_SIZE_HWORD : DMA_BEAT_SIZE_BYTE;
               descriptor[d].BTCTRL.bit.SRCINC = 1;
               descriptor[d].BTCTRL.bit.DSTINC = 0;
               descriptor[d].BTCTRL.bit.STEPSEL = DMA_STEPSEL_SRC;
               descriptor[d].BTCTRL.bit.STEPSIZE =
-                  DMA_ADDRESS_INCREMENT_STEP_SIZE_1;
+                DMA_ADDRESS_INCREMENT_STEP_SIZE_1;
               descriptor[d].DSTADDR.reg = (uint32_t)tft8.writePort;
             }
 #endif      // __SAMD51
@@ -876,13 +883,13 @@ void GFX_IO::initSPI(uint32_t freq, uint8_t spiMode) {
           lastFillLen = 0;
           dma.setCallback(dma_callback);
           return; // Success!
-                  // else clean up any partial allocation...
+          // else clean up any partial allocation...
         }         // end descriptor memalign()
         free(pixelBuf[0]);
         pixelBuf[0] = pixelBuf[1] = NULL;
       }         // end pixelBuf malloc()
-                // Don't currently have a descriptor delete function in
-                // ZeroDMA lib, but if we did, it would be called here.
+      // Don't currently have a descriptor delete function in
+      // ZeroDMA lib, but if we did, it would be called here.
     }           // end addDescriptor()
     dma.free(); // Deallocate DMA channel
   }
@@ -977,7 +984,7 @@ void GFX_IO::writePixel(int16_t x, int16_t y, uint16_t color) {
                        much forethought on the application side.
 */
 void GFX_IO::writePixels(uint16_t *colors, uint32_t len, bool block,
-                                  bool bigEndian) {
+                         bool bigEndian) {
 
   if (!len)
     return; // Avoid 0-byte transfers
@@ -1037,7 +1044,7 @@ void GFX_IO::writePixels(uint16_t *colors, uint32_t len, bool block,
         // need a long descriptor list. We just alternate between the
         // first two, sharing pixelBufIdx for that purpose.
         descriptor[pixelBufIdx].SRCADDR.reg =
-            (uint32_t)pixelBuf[pixelBufIdx] + count * 2;
+          (uint32_t)pixelBuf[pixelBufIdx] + count * 2;
         descriptor[pixelBufIdx].BTCTRL.bit.SRCINC = 1;
         descriptor[pixelBufIdx].BTCNT.reg = count * 2;
         descriptor[pixelBufIdx].DESCADDR.reg = 0;
@@ -1219,7 +1226,7 @@ void GFX_IO::writeColor(uint16_t color, uint32_t len) {
       // descriptor list pointing repeatedly to this data. We can do
       // this slightly faster working 2 pixels (32 bits) at a time.
       uint32_t *pixelPtr = (uint32_t *)pixelBuf[0],
-               twoPixels = __builtin_bswap16(color) * 0x00010001;
+                twoPixels = __builtin_bswap16(color) * 0x00010001;
       // We can avoid some or all of the buffer-filling if the color
       // is the same as last time...
       if (color == lastFillColor) {
@@ -1265,11 +1272,11 @@ void GFX_IO::writeColor(uint16_t color, uint32_t len) {
       dma.trigger();
     while (dma_busy)
       ; // Wait for completion
-      // Unfortunately blocking is necessary. An earlier version returned
-      // immediately and checked dma_busy on startWrite() instead, but it
-      // turns out to be MUCH slower on many graphics operations (as when
-      // drawing lines, pixel-by-pixel), perhaps because it's a volatile
-      // type and doesn't cache. Working on this.
+    // Unfortunately blocking is necessary. An earlier version returned
+    // immediately and checked dma_busy on startWrite() instead, but it
+    // turns out to be MUCH slower on many graphics operations (as when
+    // drawing lines, pixel-by-pixel), perhaps because it's a volatile
+    // type and doesn't cache. Working on this.
 #if defined(__SAMD51__) || defined(ARDUINO_SAMD_ZERO)
     if (connection == TFT_HARD_SPI) {
       // SAMD51: SPI DMA seems to leave the SPI peripheral in a freaky
@@ -1428,7 +1435,7 @@ void GFX_IO::writeColor(uint16_t color, uint32_t len) {
             and rejects clipped rectangles at the least-work possibility.
 */
 void GFX_IO::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-                                    uint16_t color) {
+                           uint16_t color) {
   if (w && h) {   // Nonzero width and height?
     if (w < 0) {  // If negative width...
       x += w + 1; //   Move X to left edge
@@ -1480,7 +1487,7 @@ void GFX_IO::writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h,
     @param  color  16-bit line color in '565' RGB format.
 */
 void inline GFX_IO::writeFastHLine(int16_t x, int16_t y, int16_t w,
-                                            uint16_t color) {
+                                   uint16_t color) {
   if ((y >= 0) && (y < _height) && w) { // Y on screen, nonzero width
     if (w < 0) {                        // If negative width...
       x += w + 1;                       //   Move X to left edge
@@ -1516,7 +1523,7 @@ void inline GFX_IO::writeFastHLine(int16_t x, int16_t y, int16_t w,
     @param  color  16-bit line color in '565' RGB format.
 */
 void inline GFX_IO::writeFastVLine(int16_t x, int16_t y, int16_t h,
-                                            uint16_t color) {
+                                   uint16_t color) {
   if ((x >= 0) && (x < _width) && h) { // X on screen, nonzero height
     if (h < 0) {                       // If negative height...
       y += h + 1;                      //   Move Y to top edge
@@ -1560,8 +1567,8 @@ void inline GFX_IO::writeFastVLine(int16_t x, int16_t y, int16_t h,
             and horizontal/vertical lines are written to best use this yet.
 */
 inline void GFX_IO::writeFillRectPreclipped(int16_t x, int16_t y,
-                                                     int16_t w, int16_t h,
-                                                     uint16_t color) {
+    int16_t w, int16_t h,
+    uint16_t color) {
   setAddrWindow(x, y, w, h);
   writeColor(color, (uint32_t)w * h);
 }
@@ -1614,7 +1621,7 @@ void GFX_IO::drawPixel(int16_t x, int16_t y, uint16_t color) {
             that much code.
 */
 void GFX_IO::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-                               uint16_t color) {
+                      uint16_t color) {
   if (w && h) {   // Nonzero width and height?
     if (w < 0) {  // If negative width...
       x += w + 1; //   Move X to left edge
@@ -1672,7 +1679,7 @@ void GFX_IO::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
             transaction isn't performed at all if the line is rejected.
 */
 void GFX_IO::drawFastHLine(int16_t x, int16_t y, int16_t w,
-                                    uint16_t color) {
+                           uint16_t color) {
   if ((y >= 0) && (y < _height) && w) { // Y on screen, nonzero width
     if (w < 0) {                        // If negative width...
       x += w + 1;                       //   Move X to left edge
@@ -1713,7 +1720,7 @@ void GFX_IO::drawFastHLine(int16_t x, int16_t y, int16_t w,
             transaction isn't performed at all if the line is rejected.
 */
 void GFX_IO::drawFastVLine(int16_t x, int16_t y, int16_t h,
-                                    uint16_t color) {
+                           uint16_t color) {
   if ((x >= 0) && (x < _width) && h) { // X on screen, nonzero height
     if (h < 0) {                       // If negative height...
       y += h + 1;                      //   Move Y to top edge
@@ -1768,7 +1775,7 @@ void GFX_IO::pushColor(uint16_t color) {
     @param  h        Height of bitmap in pixels.
 */
 void GFX_IO::drawRGBBitmap(int16_t x, int16_t y, uint16_t *pcolors,
-                                    int16_t w, int16_t h) {
+                           int16_t w, int16_t h) {
 
   int16_t x2, y2;                 // Lower-right coord
   if ((x >= _width) ||            // Off-edge right
@@ -1778,7 +1785,7 @@ void GFX_IO::drawRGBBitmap(int16_t x, int16_t y, uint16_t *pcolors,
     return; // " bottom
 
   int16_t bx1 = 0, by1 = 0, // Clipped top-left within bitmap
-      saveW = w;            // Save original bitmap width value
+          saveW = w;            // Save original bitmap width value
   if (x < 0) {              // Clip left
     w += x;
     bx1 = -x;
@@ -1833,14 +1840,14 @@ uint16_t GFX_IO::color565(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 /*!
-@brief   GFX_IO Send Command handles complete sending of commands and
-data
-@param   commandByte       The Command Byte
-@param   dataBytes         A pointer to the Data bytes to send
-@param   numDataBytes      The number of bytes we should send
+  @brief   GFX_IO Send Command handles complete sending of commands and
+  data
+  @param   commandByte       The Command Byte
+  @param   dataBytes         A pointer to the Data bytes to send
+  @param   numDataBytes      The number of bytes we should send
 */
 void GFX_IO::sendCommand(uint8_t commandByte, uint8_t *dataBytes,
-                                  uint8_t numDataBytes) {
+                         uint8_t numDataBytes) {
   SPI_BEGIN_TRANSACTION();
   if (_cs >= 0)
     SPI_CS_LOW();
@@ -1865,14 +1872,14 @@ void GFX_IO::sendCommand(uint8_t commandByte, uint8_t *dataBytes,
 }
 
 /*!
- @brief   GFX_IO Send Command handles complete sending of commands and
- data
- @param   commandByte       The Command Byte
- @param   dataBytes         A pointer to the Data bytes to send
- @param   numDataBytes      The number of bytes we should send
- */
+  @brief   GFX_IO Send Command handles complete sending of commands and
+  data
+  @param   commandByte       The Command Byte
+  @param   dataBytes         A pointer to the Data bytes to send
+  @param   numDataBytes      The number of bytes we should send
+*/
 void GFX_IO::sendCommand(uint8_t commandByte, const uint8_t *dataBytes,
-                                  uint8_t numDataBytes) {
+                         uint8_t numDataBytes) {
   SPI_BEGIN_TRANSACTION();
   if (_cs >= 0)
     SPI_CS_LOW();
@@ -1896,19 +1903,19 @@ void GFX_IO::sendCommand(uint8_t commandByte, const uint8_t *dataBytes,
 }
 
 /*!
- @brief  GFX_IO sendCommand16 handles complete sending of
+  @brief  GFX_IO sendCommand16 handles complete sending of
          commands and data for 16-bit parallel displays. Currently somewhat
          rigged for the NT35510, which has the odd behavior of wanting
          commands 16-bit, but subsequent data as 8-bit values, despite
          the 16-bit bus (high byte is always 0). Also seems to require
          issuing and incrementing address with each transfer.
- @param  commandWord   The command word (16 bits)
- @param  dataBytes     A pointer to the data bytes to send
- @param  numDataBytes  The number of bytes we should send
- */
+  @param  commandWord   The command word (16 bits)
+  @param  dataBytes     A pointer to the data bytes to send
+  @param  numDataBytes  The number of bytes we should send
+*/
 void GFX_IO::sendCommand16(uint16_t commandWord,
-                                    const uint8_t *dataBytes,
-                                    uint8_t numDataBytes) {
+                           const uint8_t *dataBytes,
+                           uint8_t numDataBytes) {
   SPI_BEGIN_TRANSACTION();
   if (_cs >= 0)
     SPI_CS_LOW();
@@ -1932,15 +1939,15 @@ void GFX_IO::sendCommand16(uint16_t commandWord,
 }
 
 /*!
- @brief   Read 8 bits of data from display configuration memory (not RAM).
- This is highly undocumented/supported and should be avoided,
- function is only included because some of the examples use it.
- @param   commandByte
- The command register to read data from.
- @param   index
- The byte index into the command to read from.
- @return  Unsigned 8-bit data read from display register.
- */
+  @brief   Read 8 bits of data from display configuration memory (not RAM).
+  This is highly undocumented/supported and should be avoided,
+  function is only included because some of the examples use it.
+  @param   commandByte
+  The command register to read data from.
+  @param   index
+  The byte index into the command to read from.
+  @return  Unsigned 8-bit data read from display register.
+*/
 /**************************************************************************/
 uint8_t GFX_IO::readcommand8(uint8_t commandByte, uint8_t index) {
   uint8_t result;
@@ -1956,11 +1963,11 @@ uint8_t GFX_IO::readcommand8(uint8_t commandByte, uint8_t index) {
 }
 
 /*!
- @brief   Read 16 bits of data from display register.
+  @brief   Read 16 bits of data from display register.
           For 16-bit parallel displays only.
- @param   addr  Command/register to access.
- @return  Unsigned 16-bit data.
- */
+  @param   addr  Command/register to access.
+  @return  Unsigned 16-bit data.
+*/
 uint16_t GFX_IO::readcommand16(uint16_t addr) {
 #if defined(USE_FAST_PINIO) // NOT SUPPORTED without USE_FAST_PINIO
   uint16_t result = 0;
